@@ -1,9 +1,13 @@
 #!/bin/bash
-# still heavily a WIP
-# overall goal is to enable easier firmware vulnerability analysis via Ghidra automation
+# Still heavily a WIP
+# By tim / hakstuff
+# Overall goal is to enable easier firmware vulnerability analysis via Ghidra automation
 
 # usage:
 # ./ghidra_auto.sh [target elf]
+
+# NOTE: Requires at least Ghidra 11.3_PUBLIC!
+# (This is for the headless library loader)
 
 GHIDRA_PATH="/path/to/ghidra"  # Update this path
 BINARY_PATH="$1"
@@ -15,12 +19,14 @@ fi
 
 BINARY_NAME=$(basename "$BINARY_PATH")
 OUTPUT_DIR="ghidra_output/$BINARY_NAME"
+HSPX_OUTPUT_DIR="HARUSPEX-$BINARY_NAME"
 mkdir -p "$OUTPUT_DIR"
 
-# Step 1: Run Ghidra headless to find dangerous functions
-$GHIDRA_PATH/support/analyzeHeadless "$OUTPUT_DIR" "ghidra_project" -import "$BINARY_PATH" -postScript "find_dangerous_functions.py" -deleteProject
+# Set up directories for scripts and libraries
+SCRIPT_DIR="/path/to/ghidra/scripts" # Update this path
+LIBRARY_DIR="/path/to/external/libraries" # Update this path
 
-# Step 2: Run Ghidra headless to extract decompiled pseudocode using 0xdea's Haruspex
-$GHIDRA_PATH/support/analyzeHeadless "$OUTPUT_DIR" "ghidra_project" -import "$BINARY_PATH" -postScript "Haruspex.java" -deleteProject
+# Run Ghidra headless to extract decompiled pseudocode using 0xdea's Haruspex
+$GHIDRA_PATH/support/analyzeHeadless "$OUTPUT_DIR" "ghidra_project" -import "$BINARY_PATH" -loader "ElfLoader" -loader-loadLibraries "true" -loader-libraryDestinationFolder "libs" -librarySearchPaths "$LIBRARY_DIR" -scriptPath "$SCRIPT_DIR" -postScript "Haruspex.java" "$HSPX_OUTPUT_DIR" -deleteProject
 
 echo "Analysis complete. Output stored in $OUTPUT_DIR"
