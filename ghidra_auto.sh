@@ -27,6 +27,6 @@ SCRIPT_DIR="/path/to/ghidra/scripts" # Update this path
 LIBRARY_DIR="/path/to/external/libraries" # Update this path
 
 # Run Ghidra headless to extract decompiled pseudocode using 0xdea's Haruspex
-$GHIDRA_PATH/support/analyzeHeadless "$OUTPUT_DIR" "ghidra_project" -import "$BINARY_PATH" -loader "ElfLoader" -loader-loadLibraries "true" -loader-libraryDestinationFolder "libs" -librarySearchPaths "$LIBRARY_DIR" -scriptPath "$SCRIPT_DIR" -postScript "Haruspex.java" "$HSPX_OUTPUT_DIR" -deleteProject
+$GHIDRA_PATH/support/analyzeHeadless "$OUTPUT_DIR" "ghidra_project" -import "$BINARY_PATH" -loader "ElfLoader" -loader-loadLibraries "true" -loader-libraryDestinationFolder "/libs" -librarySearchPaths "$LIBRARY_DIR" -scriptPath "$SCRIPT_DIR" -postScript "Haruspex.java" "$HSPX_OUTPUT_DIR" -deleteProject
 
 echo "Analysis complete. Output stored in $OUTPUT_DIR"
